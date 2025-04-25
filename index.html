@@ -1,1 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Negative Confessions Tracker</title>
+    <style>
+        :root {
+            --primary: #3a506b;
+            --secondary: #1c2541;
+            --accent: #6fffe9;
+            --light: #eef2f7;
+            --dark: #0b132b;
+            --success: #3aafa9;
+            --warning: #f8c630;
+            --danger: #e84855;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            padding: 10px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        h1, h2, h3 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        h1 {
+            text-align: center;
+            font-size: 1.5rem;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        
+        h2 {
+            font-size: 1.3rem;
+            border-left: 4px solid var(--accent);
+            padding-left: 10px;
+            margin-top: 20px;
+        }
+        
+        h3 {
+            font-size: 1.1rem;
+            margin-top: 15px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 15px;
+        }
+        
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            background: #ddd;
+            cursor: pointer;
+        }
+        
+        .tab.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .tab:first-child {
+            border-radius: 5px 0 0 5px;
+        }
+        
+        .tab:last-child {
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        select, input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background: var(--secondary);
+        }
+        
+        .score-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+        }
+        
+        .score-button {
+            width: 18%;
+            padding: 10px 0;
+            border-radius: 50%;
+            aspect-ratio: 1;
+            text-align: center;
+        }
+        
+        .score-1 { background: #ffcccb; }
+        .score-2 { background: #ffdbba; }
+        .score-3 { background: #ffffba; }
+        .score-4 { background: #baffba; }
+        .score-5 { background: #baffc9; }
+        
+        .score-button.selected {
+            border: 3px solid var(--primary);
+            font-weight: bold;
+        }
+        
+        .confession-list {
+            margin-bottom: 20px;
+        }
+        
+        .confession-item {
+            padding: 12px;
+            border-left: 3px solid var(--primary);
+            background: white;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+        
+        .area-heading {
+            font-weight: bold;
+            margin-top: 15px;
+            margin-bottom: 8px;
+            font-size: 1rem;
+            color: var(--secondary);
+        }
+        
+        .stats-row {
+            display: flex;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+        
+        .stats-label {
+            flex: 2;
+            font-size: 0.9rem;
+        }
+        
+        .stats-value {
+            flex: 1;
+            text-align: right;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background: #ddd;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--success);
+        }
+    </style>
+</head>
+<body>
+    <h1>Negative Confessions Tracker</h1>
+    
+    <div class="tabs">
+        <div class="tab active" onclick="openTab('daily')">Today</div>
+        <div class="tab" onclick="openTab('confessions')">Confessions</div>
+        <div class="tab" onclick="openTab('stats')">Progress</div>
+    </div>
+    
+    <div id="daily" class="tab-content active">
+        <div class="card">
+            <h3>Morning Practice</h3>
+            <div class="form-group">
+                <label for="focus-area">Core Focus Area:</label>
+                <select id="focus-area">
+                    <option>Honesty & Integrity</option>
+                    <option>Overcoming Lust</option>
+                    <option>Conquering Greed</option>
+                    <option>Defeating Procrastination</option>
+                    <option>Overcoming Jealousy</option>
+                    <option>Financial Mastery</option>
+                    <option>Mental Clarity</option>
+                    <option>Spiritual Growth</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="daily-confession">Today's Focus Confession:</label>
+                <select id="daily-confession">
+                    <option>I have not lied or deceived others.</option>
+                    <option>I have not spoken falsehoods, even when convenient.</option>
+                    <option>I have not hidden important truths from others or myself.</option>
+                    <option>I have not broken promises I've made.</option>
+                    <option>I have not presented myself falsely to gain advantage.</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="intention">My Positive Intention:</label>
+                <input type="text" id="intention" placeholder="Today I will..." />
+            </div>
+            
+            <button>Set Daily Intention</button>
+        </div>
+        
+        <div class="card">
+            <h3>Evening Reflection</h3>
+            <p>How well did I honor today's confession?</p>
+            
+            <div class="score-buttons">
+                <div class="score-button score-1" onclick="selectScore(1)">1</div>
+                <div class="score-button score-2" onclick="selectScore(2)">2</div>
+                <div class="score-button score-3" onclick="selectScore(3)">3</div>
+                <div class="score-button score-4" onclick="selectScore(4)">4</div>
+                <div class="score-button score-5 selected" onclick="selectScore(5)">5</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="victory">Victory Moment:</label>
+                <textarea id="victory" rows="2" placeholder="When did I succeed today?"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="challenge">Challenge Moment:</label>
+                <textarea id="challenge" rows="2" placeholder="Where did I struggle today?"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="additional-area">Additional Area Review:</label>
+                <select id="additional-area">
+                    <option>Social & Community Responsibility</option>
+                    <option>Environmental Stewardship</option>
+                    <option>Justice & Fairness</option>
+                    <option>Work Ethics</option>
+                    <option>Family Relationships</option>
+                    <option>Physical Well-being</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="insight">Key Insight:</label>
+                <input type="text" id="insight" placeholder="What did I learn?" />
+            </div>
+            
+            <button>Complete Daily Practice</button>
+        </div>
+    </div>
+    
+    <div id="confessions" class="tab-content">
+        <div class="card">
+            <div class="form-group">
+                <label for="confession-area">Select Area:</label>
+                <select id="confession-area" onchange="showConfessions()">
+                    <option>Honesty & Integrity</option>
+                    <option>Overcoming Lust</option>
+                    <option>Conquering Greed</option>
+                    <option>Defeating Procrastination</option>
+                    <option>Overcoming Jealousy</option>
+                    <option>Financial Mastery</option>
+                    <option>Mental Clarity</option>
+                    <option>Spiritual Growth</option>
+                    <option>Social & Community</option>
+                    <option>Environmental Stewardship</option>
+                    <option>Justice & Fairness</option>
+                    <option>Work Ethics</option>
+                    <option>Family Relationships</option>
+                    <option>Physical Well-being</option>
+                </select>
+            </div>
+            
+            <div class="confession-list">
+                <div class="area-heading">HONESTY & INTEGRITY</div>
+                <div class="confession-item">I have not lied or deceived others.</div>
+                <div class="confession-item">I have not spoken falsehoods, even when convenient.</div>
+                <div class="confession-item">I have not hidden important truths from others or myself.</div>
+                <div class="confession-item">I have not broken promises I've made.</div>
+                <div class="confession-item">I have not presented myself falsely to gain advantage.</div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="stats" class="tab-content">
+        <div class="card">
+            <h3>Weekly Progress</h3>
+            
+            <div class="stats-row">
+                <div class="stats-label">Honesty & Integrity</div>
+                <div class="stats-value">4.2</div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 84%"></div>
+            </div>
+            
+            <div class="stats-row">
+                <div class="stats-label">Overcoming Lust</div>
+                <div class="stats-value">3.7</div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 74%"></div>
+            </div>
+            
+            <div class="stats-row">
+                <div class="stats-label">Conquering Greed</div>
+                <div class="stats-value">3.5</div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 70%"></div>
+            </div>
+            
+            <div class="stats-row">
+                <div class="stats-label">Defeating Procrastination</div>
+                <div class="stats-value">2.8</div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 56%"></div>
+            </div>
+            
+            <div class="stats-row">
+                <div class="stats-label">Overcoming Jealousy</div>
+                <div class="stats-value">3.9</div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 78%"></div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3>Monthly Summary</h3>
+            <div class="form-group">
+                <label for="biggest-challenge">Biggest Challenge:</label>
+                <textarea id="biggest-challenge" rows="2"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="greatest-improvement">Greatest Improvement:</label>
+                <textarea id="greatest-improvement" rows="2"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="next-strategy">Strategy for Growth:</label>
+                <textarea id="next-strategy" rows="2"></textarea>
+            </div>
+            
+            <button>Save Monthly Reflection</button>
+        </div>
+    </div>
 
+    <script>
+        function openTab(tabName) {
+            // Hide all tab content
+            const tabContents = document.getElementsByClassName("tab-content");
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove("active");
+            }
+            
+            // Remove active class from all tabs
+            const tabs = document.getElementsByClassName("tab");
+            for (let i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove("active");
+            }
+            
+            // Show the specific tab content
+            document.getElementById(tabName).classList.add("active");
+            
+            // Add active class to the button that opened the tab
+            event.currentTarget.classList.add("active");
+        }
+        
+        function selectScore(score) {
+            // Remove selected class from all score buttons
+            const scoreButtons = document.getElementsByClassName("score-button");
+            for (let i = 0; i < scoreButtons.length; i++) {
+                scoreButtons[i].classList.remove("selected");
+            }
+            
+            // Add selected class to the clicked button
+            event.currentTarget.classList.add("selected");
+        }
+        
+        function showConfessions() {
+            // In a real app, this would load the specific confessions
+            // For this demo, we're keeping the same list
+            console.log("Would show confessions for: " + document.getElementById("confession-area").value);
+        }
+    </script>
+</body>
+</html>
